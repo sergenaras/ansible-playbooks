@@ -1,0 +1,12 @@
+- name: User Linux Create
+  hosts: all
+  become: yes
+  tasks:
+    - name: Create user
+      user:
+        name: "username"
+        password: 'password must be sha-512'
+        groups: sudo
+        system: yes
+        shell: /sbin/nologin
+        state: present
