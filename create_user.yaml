@@ -1,12 +1,19 @@
-- name: User Linux Create
-  hosts: all
+- name: User Create
+  hosts: test
   become: yes
+  vars_prompt:
+    - name: "kullanici_adi"
+      prompt: "Kullanıcı adı"
+      private: no
+    - name: "parola"
+      prompt: "Parola (SHA512 olmak zorunda)"
+      private: yes
   tasks:
     - name: Create user
       user:
-        name: "username"
-        password: 'password must be sha-512'
+        name: "{{kullanici_adi}}"
+        password: "{{parola}}"
         groups: sudo
-        system: yes
-        shell: /sbin/nologin
+        system: no
+        shell: /b
         state: present
