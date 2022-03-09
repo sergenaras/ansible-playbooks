@@ -1,0 +1,23 @@
+---
+- name: Playbook to Update cache, upgrade packages and reboot os if necessary
+  hosts: test
+  become: yes
+  gather_facts: False
+  vars:
+    ansible_python_interpreter: /usr/bin/python3
+  tasks:
+    - name: Update apt repo and cache on all Debian/Ubuntu boxes
+      apt:
+        update_cache: yes
+        force_apt_get: yes
+        cache_valid_time: 3600
+    - name: Remove deleted files packages
+      apt:
+        autoremove: true
+
+    - name: Upgrade all packages on servers
+      apt:
+        name: "*"
+        state: latest
+      register: apt_output
+    - debug: var=apt_output
