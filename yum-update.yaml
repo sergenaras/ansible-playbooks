@@ -1,0 +1,22 @@
+---
+- name: Playbook to Update cache
+  hosts: test
+  become: yes
+  gather_facts: False
+  tasks:
+    - name: Update cache for yum
+      yum:
+        update_cache: yes
+      register: cache_output
+    - debug: var=cache_output
+
+    - name: clean
+      yum:
+        autoremove: true
+
+    - name: Upgrade all packages on servers
+      yum:
+        name: "*"
+        state: latest
+      register: apt_output
+    - debug: var=apt_output
