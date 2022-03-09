@@ -2,18 +2,21 @@
   hosts: test
   become: yes
   vars_prompt:
-    - name: "kullanici_adi"
+    - name: "kullanici"
       prompt: "Kullanıcı adı"
       private: no
     - name: "parola"
       prompt: "Parola (SHA512 olmak zorunda)"
       private: yes
+    - name: "yetki"
+      promt: "Hangi gruba dahil olacak?(sudo, wheel, vs?) "
+      private: no
   tasks:
     - name: Create user
       user:
-        name: "{{kullanici_adi}}"
+        name: "{{kullanici}}"
         password: "{{parola}}"
-        groups: sudo
+        groups: "{{yetki}}"
         system: no
-        shell: /b
+        shell: /bin/bash
         state: present
