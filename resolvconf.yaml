@@ -1,0 +1,34 @@
+- name: Resolvconf Installation
+  hosts: testhost
+  become: yes
+  gather_facts: no
+  vars_prompt:
+    - name: domain_name
+      promt: "Arama yapılacak domain name"
+      private: no
+    - name: dns_address
+      promt: "DNS Address"
+      private: no
+  tasks:
+    - name: Install resolvconf package
+      apt:
+        name: resolvconf
+        state: present
+    - name: Add domain name resolvconf base file
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/base
+        line: "{{domain_name}}"
+        insertbefore: EOF
+    - name: Add nameserver resolvconf base file
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/base
+        line: "nameserver {{ dns_address }}"
+        insertbefore: EOF
+    - name: Add nameserver resolvconf base file
+      lineinfile:
+        path: /etc/resolvconf/resolv.conf.d/head
+        line: "nameserver {{ dns_address }}"
+        insertbefore: EOF
+    - name: Resolvconf update
+      shell:
+        cmd: resolvconf -u
