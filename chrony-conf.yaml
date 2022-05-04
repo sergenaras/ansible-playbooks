@@ -1,0 +1,44 @@
+---
+- name: Chrony download
+  hosts: all
+  gather_facts: yes
+  become: yes
+  tasks:
+    - name: Install chrony download with apt
+      apt: 
+        name: chrony
+        state: present
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+    - name: Install chrony download with yum
+      yum:
+        name: chrony
+        state: present
+      when: ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky' or ansible_distribution == 'Centos'
+    - name: Chrony configuration on debian based
+      blockinfile:
+        path: /etc/chrony/chrony.conf
+        block: |
+          server 0.tr.pool.ntp.org
+          server 1.tr.pool.ntp.org
+          server 2.tr.pool.ntp.org
+          server 3.tr.pool.ntp.org
+        state: present
+      when: ansible_distribution == 'Ubuntu' or ansible_distribution == 'Debian'
+    - name: Chrony configuration on rhel based
+      blockinfile:
+        path: /etc/chrony.conf
+        block: |
+          server 0.tr.pool.ntp.org
+          server 1.tr.pool.ntp.org
+          server 2.tr.pool.ntp.org
+          server 3.tr.pool.ntp.org
+        state: present
+      when: ansible_distribution == 'Red Hat Enterprise Linux' or ansible_distribution == 'Rocky' or ansible_distribution == 'Centos'
+    - name: Service
+      service:
+        name: chronyd
+        state: restarted
+        enabled: yes
+    - name: Timezone configuration
+      timezone:
+        name: Europe/Istanbul
